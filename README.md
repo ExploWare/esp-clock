@@ -14,4 +14,5 @@ the 4x7 segment display has six common anodes:
 the other two pins for the Dots are grounded while the segment pins of the display are directly soldered onto the 4511 outputs
 
 Visual for human it is not blinking, but in this nice slow motion recording, you can see the multiplexing (note the dots (colon) is directly addressed, and thus not multiplexed)
+
 ![esp-clock-slomo gif](https://github.com/ExploWare/esp-clock/assets/6767397/2cced782-255e-4701-be2f-32a7e55fe456)
