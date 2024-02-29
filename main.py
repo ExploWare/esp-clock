@@ -26,6 +26,7 @@ def setDigit(digit, number):
 
     
 def start():
+    dst=0
     stamp=[0,0,0,0,0,0,0,0]
     oldStamp=[-1,-1,-1,-1,-1,-1]
     while True:
@@ -46,7 +47,7 @@ def start():
                 # month October, before final sunday (monthday - weekday < 25)
                 # month March, on final sunday time after 2AM
                 # month October, on final sunday time before 2AM
-                baseStamp=gmtime(gmtime(time()+offset))
+                baseStamp=gmtime(time()+offset)
                 if  ( baseStamp[1] > 3 and baseStamp[1] < 10 ) or \
                     ( baseStamp[1]==3 and baseStamp[6]<6 and baseStamp[2] > 25) or \
                     ( baseStamp[1]==10 and baseStamp[2]-baseStamp[6] < 25) or \
