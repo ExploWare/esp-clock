@@ -24,8 +24,12 @@ The 4x7 segment display has six common anodes:
 the other two pins for the Dots are grounded while the segment pins of the display are directly soldered onto the 4511 outputs  
   
 The new TV-box had a USB connector with power, I looked for a 3v3 regulator as the red LEDs of the display did work on 3v3 while testing on an arduino uno and the 4511 works on 3 to 15 volts.  
-I did blow an LDO, probably missoldered my ground pin. So I desoldered one from an old webcam.  
+I did blow an LDO, probably missoldered my ground pin. So I desoldered one from an old webcam PCB.  
   
 Visual for human it is not blinking, but in this nice slow motion recording, you can see the multiplexing  
 (note the dots (colon) is directly addressed, and thus not multiplexed)  
 ![esp-clock-slomo gif](https://github.com/ExploWare/esp-clock/assets/6767397/2cced782-255e-4701-be2f-32a7e55fe456)  
+  
+  
+Since the ESP8266 is really terrible at timekeeping (a drift of 6 minutes in the hour) and the clock only to be adjustable to 160MHz or 80MHz, there is need for a Real Time Clock. But I'm out of pins...
+Luckely, the wifi of the ESP and the ntptime library being available in micropython, I was able to perform ntp requests. A lot. About every minute. No drift no mo
