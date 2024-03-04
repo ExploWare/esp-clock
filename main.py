@@ -13,7 +13,7 @@ datas= [Pin(pinData[0], Pin.OUT,value=0),Pin(pinData[1], Pin.OUT,value=0),Pin(pi
 dots=PWM(Pin(4,Pin.OUT))
 dotsDuty=100 #dutycycle on the Dots, adjust to balance with LEDs Brightness
 latch=Pin(0,Pin.OUT,value=1)
-numberDelay = [8, 3, 8, 8, 6, 7, 7, 4, 9, 1];
+numberDelay = [9, 3, 8, 8, 6, 7, 7, 4, 9, 8];
 rtc = RTC()
 
 def setDigit(digit, number):
@@ -30,12 +30,15 @@ def start():
     dst=0
     stamp=[0,0,0,0,0,0,0,0]
     oldStamp=[-1,-1,-1,-1,-1,-1]
+    lastcheck=0
     while True:
         if oldStamp[4] != stamp[4]:
             oldHour=oldStamp[3]
             oldStamp=stamp
             try:
-                ntptime.settime()
+                if time() - lastcheck > 6:
+                    ntptime.settime()
+                    lastcheck=time()
             except:
                 pass
             stamp=gmtime(time()+offset+dst)
