@@ -49,19 +49,20 @@ def start():
                 # based on no-dst time (x)
                 # months Apr-Sep
                 # month March, after final sunday
-                # month October, before final sunday (monthday - weekday < 25)
+                # month October, before final sunday (monthday - weekday < 26)
                 # month March, on final sunday time after 2AM
                 # month October, on final sunday time before 2AM
                 ###
                 baseStamp=gmtime(time()+offset)
                 if  ( baseStamp[1] > 3 and baseStamp[1] < 10 ) or \
-                    ( baseStamp[1]==3 and baseStamp[6]<6 and baseStamp[2] > 25) or \
-                    ( baseStamp[1]==10 and baseStamp[2]-baseStamp[6] < 25) or \
-                    ( baseStamp[1]==3 and baseStamp[6]==6 and baseStamp[2] > 24 and baseStamp[3] >= 2 ) or \
-                    ( baseStamp[1]==10 and baseStamp[6]==6 and baseStamp[2] > 24 and baseStamp[3] >= 2 ):
+                    ( baseStamp[1]==3 and baseStamp[6] > 6 and baseStamp[2]-baseStamp[6] > 25 ) or \
+                    ( baseStamp[1]==3 and baseStamp[6]==6 and baseStamp[2] > 25 and baseStamp[3] >= 2 ) or \
+                    ( baseStamp[1]==10 and baseStamp[6] > 6 and baseStamp[2]-baseStamp[6] < 25) or \
+                    ( baseStamp[1]==10 and baseStamp[6]==6 and baseStamp[2] > 25 and baseStamp[3] < 2 ):
                     dst=dstOffset
                 else:
                     dst=0
+            print(str(stamp[3]) + ":" + str(stamp[4]), dst)
         else:
             stamp=gmtime(time()+offset+dst)
         setDigit(0,floor(stamp[3]/10))
@@ -70,6 +71,6 @@ def start():
         setDigit(3,floor(stamp[4]%10))
         dots.duty(dotsDuty if (stamp[5]%2) else 0)
 
-sleep_ms(1500)
+sleep_ms(2500)
 while True:
     start()
