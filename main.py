@@ -2,17 +2,17 @@ from machine import Pin, PWM, RTC
 from math import floor
 from time import sleep_ms, gmtime, time
 import ntptime
-pinDigit=[3,5,12,14]
-pinData=[15,13,16,1]
-pinLE=0
-pinDots=4
-offset=1*60*60 # Timezone offset in seconds
-dstOffset=1*60*60 # additional Daylight Saving Time offset in seconds
-digits=[Pin(pinDigit[0],Pin.OUT,value=0),Pin(pinDigit[1],Pin.OUT,value=0),Pin(pinDigit[2],Pin.OUT,value=0),Pin(pinDigit[3],Pin.OUT,value=0)]
-datas= [Pin(pinData[0], Pin.OUT,value=0),Pin(pinData[1], Pin.OUT,value=0),Pin(pinData[2], Pin.OUT,value=0),Pin(pinData[3], Pin.OUT,value=0)]
-dots=PWM(Pin(4,Pin.OUT))
-dotsDuty=100 #dutycycle on the Dots, adjust to balance with LEDs Brightness
-latch=Pin(0,Pin.OUT,value=1)
+pinDigit = [3,5,12,14]
+pinData = [15,13,16,1]
+pinLE = 0
+pinDots = 4
+offset = 1*60*60 # Timezone offset in seconds
+dstOffset = 1*60*60 # additional Daylight Saving Time offset in seconds
+digits = [Pin(pinDigit[0],Pin.OUT,value=0),Pin(pinDigit[1],Pin.OUT,value=0),Pin(pinDigit[2],Pin.OUT,value=0),Pin(pinDigit[3],Pin.OUT,value=0)]
+datas =  [Pin(pinData[0], Pin.OUT,value=0),Pin(pinData[1], Pin.OUT,value=0),Pin(pinData[2], Pin.OUT,value=0),Pin(pinData[3], Pin.OUT,value=0)]
+dots = PWM(Pin(4,Pin.OUT))
+dotsDuty = 100 #dutycycle on the Dots, adjust to balance with LEDs Brightness
+latch = Pin(0,Pin.OUT,value=1)
 numberDelay = [9, 3, 8, 8, 6, 7, 7, 4, 9, 8];
 rtc = RTC()
 
@@ -52,17 +52,19 @@ def start():
                 # month October, before final sunday (monthday - weekday < 26)
                 # month March, on final sunday time after 2AM
                 # month October, on final sunday time before 2AM
+                # gmtine: (0 year, 1 month, 2 mday, 3 hour, 4 minute, 5 second, 6 weekday, 7 yearday)
                 ###
-                baseStamp=gmtime(time()+offset)
+                baseStamp=gmtime(time()+offset) #(0year, 1month, 2mday, 3hour, 4minute, 5second, 6weekday, 7yearday)
                 if  ( baseStamp[1] > 3 and baseStamp[1] < 10 ) or \
                     ( baseStamp[1]==3 and baseStamp[6] > 6 and baseStamp[2]-baseStamp[6] > 25 ) or \
                     ( baseStamp[1]==3 and baseStamp[6]==6 and baseStamp[2] > 25 and baseStamp[3] >= 2 ) or \
-                    ( baseStamp[1]==10 and baseStamp[6] > 6 and baseStamp[2]-baseStamp[6] < 25) or \
-                    ( baseStamp[1]==10 and baseStamp[6]==6 and baseStamp[2] > 25 and baseStamp[3] < 2 ):
+                    ( baseStamp[1]==10 and baseStamp[6]<6 and baseStamp[2]-baseStamp[6] < 25 ) or \
+                    ( baseStamp[1]==10 and baseStamp[6]==6 and baseStamp[2]-baseStamp[6] < 19 ) or \
+                    ( baseStamp[1]==10 and baseStamp[6]==6 and baseStamp[2] > 24 and baseStamp[3] < 2 ):
                     dst=dstOffset
                 else:
                     dst=0
-            print(str(stamp[3]) + ":" + str(stamp[4]), dst)
+            #print(str(stamp[3]) + ":" + str(stamp[4]), dst)
         else:
             stamp=gmtime(time()+offset+dst)
         setDigit(0,floor(stamp[3]/10))
@@ -71,6 +73,6 @@ def start():
         setDigit(3,floor(stamp[4]%10))
         dots.duty(dotsDuty if (stamp[5]%2) else 0)
 
-sleep_ms(2500)
+sleep_ms(2500) #allow WiFi to stabilize
 while True:
     start()
